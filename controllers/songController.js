@@ -5,16 +5,17 @@ let Song = require('../models/songs')
 
 // => localhost:4000/songs/
 router.get('/', (req, res) => {
-    Song.find((err, docs) => {
-        if (!err) {
-            res.send(docs);
+    Song.find((err, songs) => {
+        if (err) {
+            console.log(err)
         }
         else {
-            console.log('Error in Retreiving Songs:' + JSON.stringify(err, undefined, 2));
+            res.json(songs)
         }
-    });
+    })
 })
 
+// => localhost:4000/songs
 router.post('/', (req, res) => {
     let song = new Song(req.body);
     song.save()
