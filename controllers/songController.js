@@ -16,20 +16,14 @@ router.get('/', (req, res) => {
 })
 
 router.post('/', (req, res) => {
-    var song = new Song({
-        rank: req.body.rank,
-        title: req.body.title,
-        artist: req.body.artist,
-        album: req.body.album
-    })
-    song.save((err, doc) => {
-        if (!err) {
-            res.send(doc);
-        }
-        else {
-            console.log('Error in Song Save :' + JSON.stringify(err, undefined, 2));
-        }
-    })
+    let song = new Song(req.body);
+    song.save()
+        .then(song => {
+            res.status(200).json({ 'song': 'song added successfully' });
+        })
+        .catch(err => {
+            res.status(400).send('adding new song failed');
+        })
 })
 
 module.exports = router
