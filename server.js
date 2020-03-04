@@ -6,7 +6,6 @@ const mongoose = require('mongoose')
 const PORT = 4000;
 var songController = require('./controllers/songController.js')
 
-
 app.use(cors());
 app.use(bodyParser.json());
 
