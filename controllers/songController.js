@@ -20,7 +20,7 @@ router.post('/', (req, res) => {
     let song = new Song(req.body);
     song.save()
         .then(song => {
-            res.status(200).json({ 'song': 'song added successfully' });
+            res.status(200).json({ 'song': song });
         })
         .catch(err => {
             res.status(400).send('adding new song failed');
