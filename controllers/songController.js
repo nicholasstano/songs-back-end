@@ -2,12 +2,12 @@ const express = require('express');
 const router = express.Router();
 var ObjectId = require('mongoose').Types.ObjectId;
 
-let Songs = require('../models/songs')
+let Song = require('../models/songs')
 
 //get all the songs
 // => localhost:4000/songs/
 router.get('/', (req, res) => {
-    Songs.find((err, songs) => {
+    Song.find((err, songs) => {
         if (err) {
             console.log(err)
         }
@@ -21,7 +21,7 @@ router.get('/', (req, res) => {
 // => localhost:4000/songs/:id
 router.get('/:id', (req, res) => {
     let requestedId = req.params.id;
-    Songs.findById(requestedId, (err, song) => {
+    Song.findById(requestedId, (err, song) => {
         if (!err) {
             res.json(song)
         }
@@ -54,29 +54,26 @@ router.put('/:id', (req, res) => {
         album: req.body.album,
         sample: req.body.sample
     }
-    Songs.findByIdAndUpdate(req.params.id, { $set: song }, { new: true }, (err, song) => {
+    Song.updateOne({ _id: req.params.id }, { $set: song }, { new: true }, (err, data) => {
         if (!err) {
-            res.send(song);
+            res.send(data);
         }
         else {
             console.log('Error in Song Update :' + JSON.stringify(err, undefined, 2));
         }
     })
+})
 
-    router.delete('/:id', (req, res) => {
-        if (!ObjectId.isValid(req.params.id))
-            return res.status(400).send(`No record with given id: ${req.params.id}`)
-        Songs.findByIdAndRemove(req.params.id, (err, song) => {
-            if (!err) {
-                res.send(song);
-            }
-            else {
-                console.log(err)
-                console.log('Error in Song Delete :' + JSON.stringify(err, undefined, 2));
-            }
-        })
+router.route('/:id').delete((req, res, next) => {
+    Song.deleteOne({ _id: req.params.id }, (error, data) => {
+        if (error) {
+            return next(error);
+        } else {
+            res.status(200).json({
+                msg: data
+            })
+        }
     })
-
 })
 
 module.exports = router
