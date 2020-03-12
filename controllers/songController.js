@@ -6,7 +6,7 @@ let Song = require('../models/songs')
 
 //get all the songs
 // => localhost:4000/songs/
-router.get('/', (req, res) => {
+router.route('/').get((req, res) => {
     Song.find((err, songs) => {
         if (err) {
             console.log(err)
@@ -19,9 +19,8 @@ router.get('/', (req, res) => {
 
 //get individual song
 // => localhost:4000/songs/:id
-router.get('/:id', (req, res) => {
-    let requestedId = req.params.id;
-    Song.findById(requestedId, (err, song) => {
+router.route('/:id').get((req, res) => {
+    Song.findOne({ _id: req.params.id }, (err, song) => {
         if (!err) {
             res.json(song)
         }
@@ -33,7 +32,7 @@ router.get('/:id', (req, res) => {
 
 //add a new song
 // => localhost:4000/songs
-router.post('/', (req, res) => {
+router.route('/').post((req, res) => {
     let song = new Song(req.body);
     song.save()
         .then(song => {
@@ -44,22 +43,13 @@ router.post('/', (req, res) => {
         })
 })
 
-router.put('/:id', (req, res) => {
-    if (!ObjectId.isValid(req.params.id))
-        return res.status(400).send(`No record with given id: ${req.params.id}`)
-    var song = {
-        rank: req.body.rank,
-        title: req.body.title,
-        artist: req.body.artist,
-        album: req.body.album,
-        sample: req.body.sample
-    }
-    Song.updateOne({ _id: req.params.id }, { $set: song }, { new: true }, (err, data) => {
-        if (!err) {
-            res.send(data);
-        }
-        else {
-            console.log('Error in Song Update :' + JSON.stringify(err, undefined, 2));
+router.route('/:id').put((req, res, next) => {
+    Song.findOneAndUpdate({ _id: req.params.id }, { $set: req.body }, (error, data) => {
+        if (error) {
+            return next(error);
+        } else {
+            console.log(data)
+            res.json(data)
         }
     })
 })
@@ -69,9 +59,7 @@ router.route('/:id').delete((req, res, next) => {
         if (error) {
             return next(error);
         } else {
-            res.status(200).json({
-                msg: data
-            })
+            res.status(200).json({ 'id': req.params.id })
         }
     })
 })
