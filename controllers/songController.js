@@ -29,8 +29,7 @@ router.route('/:id').get((req, res) => {
         }
     })
 })
-
-//add a new song
+//Create
 // => localhost:4000/songs
 router.route('/').post((req, res) => {
     let song = new Song(req.body);
@@ -42,18 +41,17 @@ router.route('/').post((req, res) => {
             res.status(400).send('adding new song failed');
         })
 })
-
+//Update
 router.route('/:id').put((req, res, next) => {
     Song.findOneAndUpdate({ _id: req.params.id }, { $set: req.body }, (error, data) => {
         if (error) {
             return next(error);
         } else {
-            console.log(data)
             res.json(data)
         }
     })
 })
-
+//Delete
 router.route('/:id').delete((req, res, next) => {
     Song.deleteOne({ _id: req.params.id }, (error, data) => {
         if (error) {
