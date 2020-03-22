@@ -3,8 +3,9 @@ const app = express()
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const mongoose = require('mongoose')
-const PORT = 4000;
 var songController = require('./controllers/songController.js')
+
+let PORT = process.env.PORT || 4000
 
 app.use(cors());
 app.use(bodyParser.json());
